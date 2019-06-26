@@ -4,10 +4,8 @@ class PlaceResponse {
   PlaceResponse({this.places});
 
   PlaceResponse.fromJson(Map<String, dynamic> json)
-      : places =
-            (json["places"] as List)
-            .map((i) => new Place
-            .fromJson(i))
+      : places = (json["places"] as List)
+            .map((value) => new Place.fromJson(value))
             .toList();
 }
 
@@ -18,7 +16,7 @@ class Place {
   final String latitude;
   final String longtitude;
   final String image;
-  final Map<String, int> tags;
+  final Map<String, dynamic> tags;
 
   Place(
       {this.id,
@@ -26,17 +24,14 @@ class Place {
       this.description,
       this.latitude,
       this.longtitude,
-      this.image,
+      this.image, 
       this.tags});
 
-  factory Place.fromJson(Map<String, dynamic> json) {
-    return Place(
-        id: json['_id'],
-        name: json['name'],
-        description: json['description'],
-        latitude: json['latitude'],
-        longtitude: json['longitude'],
-        image: json['img_link'],
-        tags: json['tags']);
-  }
-}
+  Place.fromJson(Map<String, dynamic> json)
+      : id = json['_id'],
+        name = json['name'],
+        description = json['description'],
+        latitude = json['latitude'],
+        longtitude = json['longitude'],
+        image = json['img_link'],
+        tags = json['tags'];}

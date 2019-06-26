@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scatter/flutter_scatter.dart';
-import 'package:map_tags/src/models/place_tags.dart';
 
 class CloudTag extends StatelessWidget {
-  final List<PlaceTag> tags;
+  final Map<String, dynamic> tags;
 
   CloudTag(this.tags);
 
@@ -11,7 +10,7 @@ class CloudTag extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> widgets = <Widget>[];
     for (var i = 0; i < tags.length; i++) {
-      widgets.add(ScatterItem(tags[i], i));
+      widgets.add(ScatterItem(tags.keys.toList()[i], tags.values.toList()[i], i));
     }
 
     final screenSize = MediaQuery.of(context).size;
@@ -30,19 +29,20 @@ class CloudTag extends StatelessWidget {
 }
 
 class ScatterItem extends StatelessWidget {
-  ScatterItem(this.tag, this.index);
-  final PlaceTag tag;
+  ScatterItem(this.tag, this.size, this.index);
+  final String tag;
+  final int size;
   final int index;
 
   @override
   Widget build(BuildContext context) {
     final TextStyle style = Theme.of(context).textTheme.body1.copyWith(
-          fontSize: tag.size.toDouble(),
+          fontSize: size.toDouble() * 10,
         );
     return RotatedBox(
       quarterTurns: 0,
       child: Text(
-        tag.tag,
+        tag,
         style: style,
       ),
     );

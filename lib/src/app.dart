@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:map_tags/src/models/place_tags.dart';
+import 'package:map_tags/src/models/place.dart';
 import 'package:map_tags/src/widgets/cloud_tag.dart';
 
 import 'api/place_api_provider.dart';
@@ -12,58 +11,47 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  // List<Place> _places = [
-  //   Place('Caffe Cava', 'Famous coffe place', LatLng(55.753353, 48.743817)),
-  //   Place('Burger & Beer 108', 'Famoous Innopolis bar',
-  //       LatLng(55.7487577, 48.74133))
-  // ];
-
-  // final Set<Marker> _markers = {};
-  // var rng = new Random();
-  // final List<PlaceTag> _tags = [
-  //   PlaceTag('#Tasty', 67),
-  //   PlaceTag('#Salty', 55),
-  //   PlaceTag('#Amazing', 42),
-  //   PlaceTag('#Boring', 22),
-  //   PlaceTag('#Noisy', 15),
-  //   PlaceTag('#Waiting', 37),
-  //   PlaceTag('#Cakes!', 29),
-  //   PlaceTag('#Capuccino', 48),
-  //   PlaceTag('#Sushi', 15),
-  //   PlaceTag('#Coisy', 33),
-  //   PlaceTag('#Music', 55),
-  //   PlaceTag('#Jazz', 16)
-  // ];
+  Set<Marker> _markers = {};
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GoogleMapController mapController;
   static const LatLng _center = const LatLng(55.751483, 48.743836);
 
-  // Set<Marker> _buidMarkers() {
-  //   setState(() {
-  //     for (var place in _places) {
-  //       _markers.add(Marker(
-  //         markerId: MarkerId(place.id),
-  //         position: place.position,
-  //         infoWindow: InfoWindow(
-  //             title: place.tittle,
-  //             snippet: "Press for more info",
-  //             onTap: () {
-  //               showDialog(
-  //                 context: context,
-  //                 builder: (BuildContext context) => _buildPlaceInfoDialog(
-  //                     context, place.tittle, place.description, _tags),
-  //               );
-  //             }),
-  //         icon: BitmapDescriptor.defaultMarker,
-  //       ));
-  //     }
-  //   });
-  //   return _markers;
-  // }
+  @override
+  void initState() {
+    PlaceApiProvider().getAllPlaces().then((result) {
+      setState(() {
+        _markers = _buidMarkers(result.places);
+      });
+    });
+  }
+
+  Set<Marker> _buidMarkers(List<Place> places) {
+    setState(() {
+      for (var place in places) {
+        _markers.add(Marker(
+          markerId: MarkerId(place.id),
+          position: LatLng(
+              double.parse(place.latitude), double.parse(place.longtitude)),
+          infoWindow: InfoWindow(
+              title: place.name,
+              snippet: "Press for more info",
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => _buildPlaceInfoDialog(
+                      context, place.name, place.description,place.image, place.tags),
+                );
+              }),
+          icon: BitmapDescriptor.defaultMarker,
+        ));
+      }
+    });
+    return _markers;
+  }
 
   Widget _buildPlaceInfoDialog(BuildContext context, String name,
-      String description, List<PlaceTag> tags) {
+      String description, String imageURL, Map<String, dynamic> tags) {
     return new SimpleDialog(
       children: <Widget>[
         SingleChildScrollView(
@@ -71,8 +59,7 @@ class AppState extends State<App> {
             children: <Widget>[
               Padding(
                   padding: EdgeInsets.all(0),
-                  child: Image.asset('assets/images/cafe_cava.jpeg',
-                      width: 350, height: 200)),
+                  child: Image.network(imageURL, width: 350, height: 200)),
               Padding(
                 padding: EdgeInsets.only(top: 10),
                 child: Text(
@@ -118,9 +105,7 @@ class AppState extends State<App> {
           ),
           ListTile(
             title: Text('Item 1'),
-            onTap: () {
-              PlaceApiProvider().getAllPlaces();
-            },
+            onTap: () {},
           ),
         ],
       ),
@@ -138,6 +123,7 @@ class AppState extends State<App> {
             onMapCreated: (GoogleMapController controller) {
               mapController = controller;
             },
+            markers: _markers,
             myLocationEnabled: true,
             mapType: MapType.normal,
             initialCameraPosition: CameraPosition(target: _center, zoom: 15.0),
