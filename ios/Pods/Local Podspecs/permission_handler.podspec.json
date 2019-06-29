@@ -1,8 +1,8 @@
 {
   "name": "permission_handler",
-  "version": "3.1.0",
+  "version": "2.2.0",
   "summary": "Permission plugin for Flutter.",
-  "description": "A new Flutter project.",
+  "description": "Permission plugin for Flutter. This plugin provides a cross-platform (iOS, Android) API to request and check permissions.",
   "homepage": "https://github.com/baseflowit/flutter-permission-handler",
   "license": {
     "file": "../LICENSE"
@@ -20,8 +20,12 @@
 
     ]
   },
+  "swift_versions": "4.2",
   "platforms": {
     "ios": "8.0"
   },
-  "static_framework": true
+  "pod_target_xcconfig": {
+    "SWIFT_VERSION": "4.2"
+  },
+  "swift_version": "4.2"
 }

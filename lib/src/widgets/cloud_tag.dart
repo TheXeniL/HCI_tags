@@ -10,7 +10,10 @@ class CloudTag extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> widgets = <Widget>[];
     for (var i = 0; i < tags.length; i++) {
-      widgets.add(ScatterItem(tags.keys.toList()[i], tags.values.toList()[i], i));
+      print(tags.keys.toList()[i]);
+      print(tags.values.toList()[i]);
+      widgets
+          .add(ScatterItem(tags.keys.toList()[i], tags.values.toList()[i], i));
     }
 
     final screenSize = MediaQuery.of(context).size;
@@ -18,12 +21,12 @@ class CloudTag extends StatelessWidget {
 
     return Center(
       child: FittedBox(
-        child: Scatter(
-          fillGaps: true,
-          delegate: ArchimedeanSpiralScatterDelegate(ratio: ratio),
-          children: widgets,
+          child: Scatter(
+            fillGaps: true,
+            delegate: ArchimedeanSpiralScatterDelegate(ratio: ratio),
+            children: widgets,
+          ),
         ),
-      ),
     );
   }
 }
@@ -42,7 +45,7 @@ class ScatterItem extends StatelessWidget {
     return RotatedBox(
       quarterTurns: 0,
       child: Text(
-        tag,
+        "#$tag",
         style: style,
       ),
     );

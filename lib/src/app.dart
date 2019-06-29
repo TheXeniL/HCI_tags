@@ -12,6 +12,7 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   Set<Marker> _markers = {};
+  List<Place> _places = [];
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GoogleMapController mapController;
@@ -21,6 +22,7 @@ class AppState extends State<App> {
   void initState() {
     PlaceApiProvider().getAllPlaces().then((result) {
       setState(() {
+        _places = result.places;
         _markers = _buidMarkers(result.places);
       });
     });
@@ -40,7 +42,11 @@ class AppState extends State<App> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) => _buildPlaceInfoDialog(
-                      context, place.name, place.description,place.image, place.tags),
+                      context,
+                      place.name,
+                      place.description,
+                      place.image,
+                      place.tags),
                 );
               }),
           icon: BitmapDescriptor.defaultMarker,
@@ -48,6 +54,14 @@ class AppState extends State<App> {
       }
     });
     return _markers;
+  }
+
+  Widget _buildCloudTag(Map<String, dynamic> tags) {
+    if (tags.length == 0) {
+      return Text("Tags are not available right now");
+    } else {
+      return CloudTag(tags);
+    }
   }
 
   Widget _buildPlaceInfoDialog(BuildContext context, String name,
@@ -78,7 +92,7 @@ class AppState extends State<App> {
                         fontStyle: FontStyle.italic,
                         color: Colors.grey)),
               ),
-              CloudTag(tags)
+              _buildCloudTag(tags)
             ],
           ),
         ),
@@ -104,8 +118,60 @@ class AppState extends State<App> {
             leading: Icon(Icons.place),
           ),
           ListTile(
-            title: Text('Item 1'),
-            onTap: () {},
+            title: Text('Cava'),
+            onTap: () {
+              mapController.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      target: LatLng(double.parse(_places[3].latitude),
+                          double.parse(_places[3].longtitude)),
+                      zoom: 17.0),
+                ),
+              );
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Nashe Mesto'),
+            onTap: () {
+              mapController.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      target: LatLng(double.parse(_places[2].latitude),
+                          double.parse(_places[2].longtitude)),
+                      zoom: 17.0),
+                ),
+              );
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Burger & Beer 108'),
+            onTap: () {
+              mapController.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      target: LatLng(double.parse(_places[0].latitude),
+                          double.parse(_places[0].longtitude)),
+                      zoom: 17.0),
+                ),
+              );
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Cacio e vino'),
+            onTap: () {
+              mapController.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      target: LatLng(double.parse(_places[1].latitude),
+                          double.parse(_places[1].longtitude)),
+                      zoom: 17.0),
+                ),
+              );
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
@@ -129,7 +195,7 @@ class AppState extends State<App> {
             initialCameraPosition: CameraPosition(target: _center, zoom: 15.0),
           ),
           Container(
-            margin: EdgeInsets.only(top: 350, right: 10),
+            margin: EdgeInsets.only(top: 250, right: 10),
             alignment: Alignment.topRight,
             child: Column(children: <Widget>[
               FloatingActionButton(
@@ -147,7 +213,7 @@ class AppState extends State<App> {
             ]),
           ),
           Container(
-            margin: EdgeInsets.only(top: 420, right: 10),
+            margin: EdgeInsets.only(top: 320, right: 10),
             alignment: Alignment.topRight,
             child: Column(children: <Widget>[
               FloatingActionButton(
